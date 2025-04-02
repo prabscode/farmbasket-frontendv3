@@ -16,11 +16,17 @@ function App() {
     if (isAuthenticated && user) {
       const authUserId = `user_${user?.sub?.split('|')[1] || Math.random().toString(36).substring(2, 10)}`;
       setUserId(authUserId);
+      localStorage.setItem("userId", authUserId);
     } else {
       // Check localStorage as fallback
       const storedUserId = localStorage.getItem("userId");
       if (storedUserId) {
         setUserId(storedUserId);
+      } else {
+        // If no stored userId exists, create a new anonymous one
+        const anonymousId = `anon_${Math.random().toString(36).substring(2, 10)}`;
+        setUserId(anonymousId);
+        localStorage.setItem("userId", anonymousId);
       }
     }
   }, [isAuthenticated, user]);
