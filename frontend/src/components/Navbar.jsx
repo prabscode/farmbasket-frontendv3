@@ -22,6 +22,7 @@ import { useAuth0 } from "@auth0/auth0-react";
 import axios from "axios"; // Make sure axios is installed
 
 const API_URL = "http://localhost:5000";
+
 const menuItems = [
   { title: "Home", path: "/" },
   { title: "Products", path: "/products-page" },
@@ -69,13 +70,13 @@ function NavListMenu() {
         onMouseEnter={() => setIsMenuOpen(true)}
         onMouseLeave={() => setIsMenuOpen(false)}
       >
-        <MenuItem 
+        <MenuItem
           onClick={() => handleMenuItemClick("/products-page")}
           className="px-4 py-2 text-sm font-medium hover:bg-gray-100 rounded"
         >
           Products
         </MenuItem>
-        <MenuItem 
+        <MenuItem
           onClick={() => handleMenuItemClick("/bundles")}
           className="px-4 py-2 text-sm font-medium text-black-900 hover:bg-gray-100 rounded"
         >
@@ -88,7 +89,7 @@ function NavListMenu() {
 
 function NavList() {
   const navigate = useNavigate();
-  
+
   const handleNavItemClick = (path) => {
     navigate(path);
   };
@@ -124,11 +125,11 @@ export function NavbarMenu() {
   const { user, isAuthenticated, loginWithRedirect, logout } = useAuth0();
   const [dbUser, setDbUser] = useState(null);
   const navigate = useNavigate();
-  
+
   // Generate a simple user ID if authenticated using Auth0's sub
   const userId = isAuthenticated ? `user_${user?.sub?.split('|')[1] ||
-    Math.random().toString(36).substring(2, 10)}` : null;
-    
+  Math.random().toString(36).substring(2, 10)}` : null;
+
   useEffect(() => {
     window.addEventListener(
       "resize",
