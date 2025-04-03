@@ -176,7 +176,7 @@ export function NavbarMenu() {
   };
 
   return (
-    <Navbar className="mx-auto px-4 py-2 shadow-md">
+    <Navbar className="mx-auto px-4 py-2 border-b border-gray-200 shadow-sm">
       <div className="flex items-center justify-between text-gray-900">
         <Typography
           variant="h6"
