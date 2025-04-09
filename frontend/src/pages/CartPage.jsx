@@ -23,7 +23,6 @@ const CartPage = () => {
     // Get userId from localStorage
     const storedUserId = localStorage.getItem("userId");
     setUserId(storedUserId);
-    
     // Get cart from localStorage
     try {
       const savedCart = localStorage.getItem('cart');
@@ -86,7 +85,6 @@ const CartPage = () => {
       alert("Please log in to complete your purchase");
       return;
     }
-
     // Prepare order data for backend with full product details
     const orderData = {
       userId,
@@ -103,7 +101,6 @@ const CartPage = () => {
       shippingDetails: orderDetails,
       totalAmount: calculateTotal()
     };
-
     try {
       const response = await fetch("http://localhost:5000/api/orders", {
         method: "POST",
@@ -112,18 +109,14 @@ const CartPage = () => {
         },
         body: JSON.stringify(orderData),
       });
-
       if (!response.ok) {
         throw new Error("Failed to place order");
       }
-
       const data = await response.json();
       setOrderId(data._id || "ORD-" + Math.random().toString(36).substring(2, 10));
-      
       // Clear cart
       localStorage.removeItem('cart');
       setCart([]);
-      
       // Move to confirmation step
       setCurrentStep("confirmation");
     } catch (error) {
@@ -135,19 +128,19 @@ const CartPage = () => {
   // If cart is empty, show empty cart message
   if (cart.length === 0 && currentStep !== "confirmation") {
     return (
-      <div className="container mx-auto py-12 px-6">
-        <h1 className="text-3xl font-bold mb-8 text-gray-800">Your Cart</h1>
+      <div className="container mx-auto py-12 px-6 bg-gray-50">
+        <h1 className="text-3xl font-bold mb-8 text-gray-900">Your Cart</h1>
         <div className="bg-white rounded-lg shadow-lg p-10 text-center max-w-2xl mx-auto">
           <div className="inline-flex items-center justify-center w-20 h-20 bg-gray-100 rounded-full mb-6">
             <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
             </svg>
           </div>
-          <h2 className="text-2xl font-semibold mb-4 text-gray-700">Your cart is empty</h2>
-          <p className="text-gray-500 mb-8">Looks like you haven't added any products to your cart yet.</p>
+          <h2 className="text-2xl font-semibold mb-4 text-gray-900">Your cart is empty</h2>
+          <p className="text-gray-600 mb-8">Looks like you haven't added any products to your cart yet.</p>
           <a
             href="/products-page"
-            className="inline-block bg-blue-600 text-white font-medium px-6 py-3 rounded-lg hover:bg-blue-700 transition duration-300"
+            className="inline-block bg-gray-900 text-white font-medium px-6 py-3 rounded-lg hover:bg-gray-800 transition duration-300"
           >
             Continue Shopping
           </a>
@@ -157,62 +150,69 @@ const CartPage = () => {
   }
 
   return (
-    <div className="container mx-auto py-8 px-4">
-      <h1 className="text-3xl font-bold mb-8 text-gray-800">Checkout</h1>
-      
+    <div className="container mx-auto py-8 px-4 bg-whitesmoke">
+      <h1 className="text-3xl font-bold mb-8 text-gray-900">Checkout</h1>
       {/* Progress Steps */}
       <div className="flex items-center justify-center mb-12">
         <div className="flex items-center">
           <div className={`rounded-full h-10 w-10 flex items-center justify-center border-2 ${
-            currentStep === "address" ? "border-blue-500 text-blue-500" : 
-            currentStep === "review" || currentStep === "confirmation" ? "bg-blue-500 border-blue-500 text-white" : 
+            currentStep === "address" ? "border-gray-900 text-gray-900" :
+            currentStep === "review" || currentStep === "confirmation" ? "bg-green-500 border-green-500 text-white" :
             "border-gray-300 text-gray-300"
           }`}>
-            1
+            {currentStep === "address" ? "1" : 
+             currentStep === "review" || currentStep === "confirmation" ? (
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+              </svg>
+            ) : "1"}
           </div>
           <span className={`ml-2 text-sm font-medium ${
-            currentStep === "address" ? "text-blue-500" : 
-            currentStep === "review" || currentStep === "confirmation" ? "text-gray-700" : 
+            currentStep === "address" ? "text-gray-900" :
+            currentStep === "review" || currentStep === "confirmation" ? "text-gray-700" :
             "text-gray-400"
           }`}>Address</span>
         </div>
-        
         <div className={`flex-1 h-1 mx-4 ${
-          currentStep === "review" || currentStep === "confirmation" ? "bg-blue-500" : "bg-gray-200"
+          currentStep === "review" || currentStep === "confirmation" ? "bg-gray-900" : "bg-gray-200"
         }`}></div>
-        
         <div className="flex items-center">
           <div className={`rounded-full h-10 w-10 flex items-center justify-center border-2 ${
-            currentStep === "review" ? "border-blue-500 text-blue-500" : 
-            currentStep === "confirmation" ? "bg-blue-500 border-blue-500 text-white" : 
+            currentStep === "review" ? "border-gray-900 text-gray-900" :
+            currentStep === "confirmation" ? "bg-green-500 border-green-500 text-white" :
             "border-gray-300 text-gray-300"
           }`}>
-            2
+            {currentStep === "confirmation" ? (
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+              </svg>
+            ) : "2"}
           </div>
           <span className={`ml-2 text-sm font-medium ${
-            currentStep === "review" ? "text-blue-500" : 
-            currentStep === "confirmation" ? "text-gray-700" : 
+            currentStep === "review" ? "text-gray-900" :
+            currentStep === "confirmation" ? "text-gray-700" :
             "text-gray-400"
           }`}>Review</span>
         </div>
-        
         <div className={`flex-1 h-1 mx-4 ${
-          currentStep === "confirmation" ? "bg-blue-500" : "bg-gray-200"
+          currentStep === "confirmation" ? "bg-gray-900" : "bg-gray-200"
         }`}></div>
-        
         <div className="flex items-center">
           <div className={`rounded-full h-10 w-10 flex items-center justify-center border-2 ${
-            currentStep === "confirmation" ? "bg-blue-500 border-blue-500 text-white" : 
+            currentStep === "confirmation" ? "bg-green-500 border-green-500 text-white" :
             "border-gray-300 text-gray-300"
           }`}>
-            3
+            {currentStep === "confirmation" ? (
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+              </svg>
+            ) : "3"}
           </div>
           <span className={`ml-2 text-sm font-medium ${
-            currentStep === "confirmation" ? "text-blue-500" : "text-gray-400"
+            currentStep === "confirmation" ? "text-gray-900" : "text-gray-400"
           }`}>Confirmation</span>
         </div>
       </div>
-      
       {/* Content Area */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Left Side - Form Area */}
@@ -226,7 +226,6 @@ const CartPage = () => {
               updateQuantity={updateQuantity}
             />
           )}
-          
           {currentStep === "review" && (
             <Review
               orderDetails={orderDetails}
@@ -236,7 +235,6 @@ const CartPage = () => {
               placeOrder={placeOrder}
             />
           )}
-          
           {currentStep === "confirmation" && (
             <OrderConfirmation
               orderId={orderId}
@@ -244,7 +242,6 @@ const CartPage = () => {
             />
           )}
         </div>
-        
         {/* Right Side - Order Summary */}
         {currentStep !== "confirmation" && (
           <div className="lg:col-span-1">
