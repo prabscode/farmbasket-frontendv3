@@ -1,3 +1,5 @@
+
+// Updated App.js
 import './App.css'
 import { NavbarMenu } from './components/Navbar'
 import Home from './pages/Home'
@@ -5,6 +7,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import Products from './pages/Products'
 import Productspage from './pages/Productspage'
 import Bundles from './pages/Bundles'
+import CartPage from './pages/CartPage'
 import { useAuth0 } from '@auth0/auth0-react'
 import { useEffect, useState } from 'react'
 
@@ -40,7 +43,7 @@ function App() {
           <Route path="/products" element={<Products userId={userId} />} />
           <Route path="/products-page" element={<Productspage userId={userId} />} />
           <Route path="/bundles" element={<Bundles />} />
-          <Route path="/cart" element={<div className="p-8">Cart Page Under Construction</div>} />
+          <Route path="/cart" element={<CartPage />} />
         </Routes>
       </BrowserRouter>
     </>
