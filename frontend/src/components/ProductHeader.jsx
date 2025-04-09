@@ -7,10 +7,15 @@ const ProductHeader = ({ onSearch, onSort, cartItemCount = 0 }) => {
   const [showSortOptions, setShowSortOptions] = useState(false);
   const [sortOption, setSortOption] = useState('newest');
   
+  // Updated sort options with the new ones
   const sortOptions = [
     { name: 'Newest', value: 'newest' },
     { name: 'Price: Low to High', value: 'price_low_high' },
     { name: 'Price: High to Low', value: 'price_high_low' },
+    { name: 'Stock: High to Low', value: 'stock_high_low' },
+    { name: 'Stock: Low to High', value: 'stock_low_high' },
+    { name: 'Delivery: Quickest', value: 'delivery_quickest' },
+    { name: 'Delivery: Longest', value: 'delivery_longest' },
   ];
 
   // Trigger search when typing
@@ -98,7 +103,7 @@ const ProductHeader = ({ onSearch, onSort, cartItemCount = 0 }) => {
                   </button>
                 </div>
                 {showSortOptions && (
-                  <div className="absolute right-0 z-10 mt-2 w-40 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none">
+                  <div className="absolute right-0 z-10 mt-2 w-60 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none">
                     <div className="py-1">
                       {sortOptions.map((option) => (
                         <button

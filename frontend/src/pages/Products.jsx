@@ -156,11 +156,11 @@ data.forEach(farmerData => {
 if (farmerData.works && Array.isArray(farmerData.works)) {
 // Extract each work item as a product with farmer info
 farmerData.works.forEach(workItem => {
-// Use the _id directly from the work item
-const productId = workItem._id;
+// Add a unique _id to each product if it doesn't have one
+const productId = workItem._id || `${farmerData._id}-${workItem.cropName}-${Math.random().toString(36).substr(2, 9)}`;
 allProducts.push({
 ...workItem,
-_id: productId, // Use the work item's _id directly
+_id: productId, // Ensure each product has a unique ID
 farmerName: farmerData.farmerName,
 farmerId: farmerData._id,
 phoneNumber: farmerData.phoneNumber,
@@ -202,6 +202,7 @@ console.error("Error loading cart from localStorage:", e);
 }
 }, []);
 // Get userId from localStorage if not passed as prop
+
 useEffect(() => {
 const storedUserId = localStorage.getItem("userId");
 console.log("Products component - userId from localStorage:", storedUserId);
@@ -218,7 +219,6 @@ sortOption: sortOptionLocal
 });
 // Start with all products
 let result = [...products];
-
 // Apply category filter
 if (activeCategory && activeCategory !== 'all') {
 result = result.filter(product =>
@@ -287,28 +287,88 @@ product.paymentOptions.includes(option)
 }
 // Apply sorting
 if (sortOptionLocal) {
-switch (sortOptionLocal) {
-case 'popular':
-// Assuming you have a popularity field, or using rating as a proxy
-result.sort((a, b) => (b.rating || 0) - (a.rating || 0));
-break;
-case 'rating':
-result.sort((a, b) => (b.rating || 0) - (a.rating || 0));
-break;
-case 'newest':
-// Assuming you have a createdAt field
-result.sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
-break;
-case 'price_low_high':
-result.sort((a, b) => (a.price || 0) - (b.price || 0));
-break;
-case 'price_high_low':
-result.sort((a, b) => (b.price || 0) - (a.price || 0));
-break;
-default:
-break;
-}
-}
+    switch (sortOptionLocal) {
+      case 'popular':
+        // Assuming you have a popularity field, or using rating as a proxy
+        result.sort((a, b) => (b.rating || 0) - (a.rating || 0));
+        break;
+      case 'rating':
+        result.sort((a, b) => (b.rating || 0) - (a.rating || 0));
+        break;
+      case 'newest':
+        // Assuming you have a createdAt field
+        result.sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
+        break;
+      case 'price_low_high':
+        result.sort((a, b) => (a.price || 0) - (b.price || 0));
+        break;
+      case 'price_high_low':
+        result.sort((a, b) => (b.price || 0) - (a.price || 0));
+        break;
+      case 'stock_high_low':
+        result.sort((a, b) => (b.stock || 0) - (a.stock || 0));
+        break;
+      case 'stock_low_high':
+        result.sort((a, b) => (a.stock || 0) - (b.stock || 0));
+        break;
+      case 'delivery_quickest':
+      case 'delivery_longest':
+        result.sort((a, b) => {
+          const getDeliveryTimeInMinutes = (product) => {
+            if (!product.estimatedDeliveryTime) {
+              return sortOptionLocal === 'delivery_quickest' ? Number.MAX_SAFE_INTEGER : -1;
+            }
+            
+            const deliveryTime = String(product.estimatedDeliveryTime).toLowerCase();
+            
+            // Handle numeric values directly
+            if (typeof product.estimatedDeliveryTime === 'number') {
+              return product.estimatedDeliveryTime * 24 * 60; // Assume days if just a number
+            }
+            
+            // Extract number and unit from string
+            const match = deliveryTime.match(/(\d+)\s*([a-z]+)/);
+            if (!match) return sortOptionLocal === 'delivery_quickest' ? Number.MAX_SAFE_INTEGER : -1;
+            
+            const value = parseInt(match[1], 10);
+            const unit = match[2].replace(/s$/, ''); // Remove trailing 's' if any
+            
+            // Convert to minutes for consistent comparison
+            switch (unit) {
+              case 'minute':
+              case 'min':
+                return value;
+              case 'hour':
+              case 'hr':
+              case 'h':
+                return value * 60;
+              case 'day':
+              case 'd':
+                return value * 24 * 60;
+              case 'week':
+              case 'wk':
+              case 'w':
+                return value * 7 * 24 * 60;
+              case 'month':
+              case 'mo':
+                return value * 30 * 24 * 60;
+              default:
+                return value * 24 * 60; // Default to days if unit is unknown
+            }
+          };
+          
+          const timeA = getDeliveryTimeInMinutes(a);
+          const timeB = getDeliveryTimeInMinutes(b);
+          
+          return sortOptionLocal === 'delivery_quickest' 
+            ? timeA - timeB  // For quickest, sort ascending
+            : timeB - timeA; // For longest, sort descending
+        });
+        break;
+      default:
+        break;
+    }
+  }
 console.log("Filtered products count:", result.length);
 setFilteredProducts(result);
 }, [filters, products, searchQueryLocal, sortOptionLocal, activeCategory]);
@@ -399,6 +459,7 @@ cartItemCount={cart.length}
 }
 // Error state
 if (error) {
+
 return (
 <div className="p-4">
 <ProductHeader
@@ -464,7 +525,7 @@ Location: {filters.location}
 {filters.priceRange && filters.priceRange.length === 2 && (
 <span className="bg-green-100 text-green-800 px-2 py-1 rounded text-sm">
 Price: ₹
-{filters.priceRange[0]}
+{filters.priceRange[0]} 
 - ₹
 {filters.priceRange[1]}
 </span>
