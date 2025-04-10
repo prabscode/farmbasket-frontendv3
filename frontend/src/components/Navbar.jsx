@@ -19,7 +19,7 @@ import {
 } from "@heroicons/react/24/outline";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth0 } from "@auth0/auth0-react";
-import axios from "axios"; // Make sure axios is installed
+import axios from "axios";
 
 const API_URL = "http://localhost:5000";
 
@@ -32,9 +32,11 @@ const menuItems = [
 function NavListMenu() {
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
+  const [selectedItem, setSelectedItem] = React.useState("Products");
   const navigate = useNavigate();
 
-  const handleMenuItemClick = (path) => {
+  const handleMenuItemClick = (path, item) => {
+    setSelectedItem(item);
     navigate(path);
     setIsMenuOpen(false);
     setIsMobileMenuOpen(false);
@@ -55,7 +57,7 @@ function NavListMenu() {
             onMouseLeave={() => setIsMenuOpen(false)}
             onClick={() => setIsMobileMenuOpen((cur) => !cur)}
           >
-            Products
+            {selectedItem}
             <ChevronDownIcon
               strokeWidth={2.5}
               className={`h-3 w-3 transition-transform ${
@@ -71,14 +73,18 @@ function NavListMenu() {
         onMouseLeave={() => setIsMenuOpen(false)}
       >
         <MenuItem
-          onClick={() => handleMenuItemClick("/products-page")}
-          className="px-4 py-2 text-sm font-medium hover:bg-gray-100 rounded"
+          onClick={() => handleMenuItemClick("/products-page", "Products")}
+          className={`px-4 py-2 text-sm font-medium hover:bg-gray-100 rounded ${
+            selectedItem === "Products" ? "bg-gray-100" : ""
+          }`}
         >
           Products
         </MenuItem>
         <MenuItem
-          onClick={() => handleMenuItemClick("/bundles")}
-          className="px-4 py-2 text-sm font-medium text-black-900 hover:bg-gray-100 rounded"
+          onClick={() => handleMenuItemClick("/bundles", "Bundles")}
+          className={`px-4 py-2 text-sm font-medium text-black-900 hover:bg-gray-100 rounded ${
+            selectedItem === "Bundles" ? "bg-gray-100" : ""
+          }`}
         >
           Bundles
         </MenuItem>
@@ -126,45 +132,41 @@ export function NavbarMenu() {
   const [dbUser, setDbUser] = useState(null);
   const navigate = useNavigate();
 
-  // Generate a simple user ID if authenticated using Auth0's sub
-  const userId = isAuthenticated ? `user_${user?.sub?.split('|')[1] ||
-  Math.random().toString(36).substring(2, 10)}` : null;
+  const userId = isAuthenticated
+    ? `user_${user?.sub?.split("|")[1] ||
+        Math.random().toString(36).substring(2, 10)}`
+    : null;
 
   useEffect(() => {
     window.addEventListener(
       "resize",
-      () => window.innerWidth >= 960 && setOpenNav(false),
+      () => window.innerWidth >= 960 && setOpenNav(false)
     );
   }, []);
 
-  // Save user to database after authentication
   useEffect(() => {
     if (isAuthenticated && user) {
       const saveUserToDatabase = async () => {
         try {
-          // Prepare user data
           const userData = {
             userId: userId,
             name: user.name,
             email: user.email,
-            picture: user.picture
+            picture: user.picture,
           };
-          // Send to backend
           const response = await axios.post(`${API_URL}/api/users`, userData);
-          console.log('User saved to database:', response.data);
+          console.log("User saved to database:", response.data);
           setDbUser(response.data.user);
-          // Save the crucial user information to localStorage
           localStorage.setItem("userId", userId);
           localStorage.setItem("userEmail", user.email);
           localStorage.setItem("userName", user.name);
-          console.log('User info saved to localStorage');
+          console.log("User info saved to localStorage");
         } catch (error) {
-          console.error('Error saving user to database:', error);
+          console.error("Error saving user to database:", error);
         }
       };
       saveUserToDatabase();
     } else {
-      // Clear localStorage when logged out
       localStorage.removeItem("userId");
       localStorage.removeItem("userEmail");
       localStorage.removeItem("userName");
@@ -209,7 +211,7 @@ export function NavbarMenu() {
               <Button
                 size="sm"
                 className="bg-black text-white shadow-sm hover:shadow rounded-full px-6"
-                onClick={() => loginWithRedirect({ screen_hint: 'signup' })}
+                onClick={() => loginWithRedirect({ screen_hint: "signup" })}
               >
                 Sign Up
               </Button>
@@ -261,7 +263,7 @@ export function NavbarMenu() {
                 size="sm"
                 fullWidth
                 className="bg-black text-white shadow-sm rounded-full"
-                onClick={() => loginWithRedirect({ screen_hint: 'signup' })}
+                onClick={() => loginWithRedirect({ screen_hint: "signup" })}
               >
                 Sign Up
               </Button>
