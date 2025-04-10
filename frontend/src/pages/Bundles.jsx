@@ -686,7 +686,7 @@ const Bundles = ({ userId: propUserId }) => {
                 </div> 
               )} 
 
-              {/* Debug info - can be removed in production */} 
+              {/* Debug info - can be removed in production 
               <div className="bg-white p-4 rounded-lg shadow-md mb-6 text-sm text-gray-600"> 
                 <p>User ID: {effectiveUserId || "Not logged in"}</p> 
                 <p>Cart Items: {cart.length}</p> 
@@ -703,11 +703,11 @@ const Bundles = ({ userId: propUserId }) => {
                   ) 
                   .map(([key]) => key) 
                   .join(', ') || 'None'}</p> 
-              </div> 
+              </div>  */}
 
               {/* Bundle Grid */} 
               {filteredBundles.length > 0 ? ( 
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-6"> 
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-2"> 
                   {filteredBundles.map((bundle, index) => ( 
                     <BundleCard 
                       key={bundle._id || index} 

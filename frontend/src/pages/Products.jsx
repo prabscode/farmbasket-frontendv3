@@ -495,7 +495,7 @@ const Products = ({
       <Categories onCategoryChange={handleCategoryChange} />
       <div className="p-4">
         <h2 className="text-2xl font-bold mb-4">Available Crops</h2>
-        {/* Debug info - Remove in production */}
+        {/* Debug info - Remove in production
         <div className="mb-4 p-2 bg-gray-100 rounded text-sm">
           <p>User ID: {effectiveUserId || "Not logged in"}</p>
           <p>Cart Items: {cart.length}</p>
@@ -511,7 +511,7 @@ const Products = ({
             )
             .map(([key]) => key)
             .join(', ') || 'None'}</p>
-        </div>
+        </div> */}
         {/* Filter Tags */}
         {Object.entries(filters).some(([key, value]) =>
           (Array.isArray(value) && value.length > 0) ||
