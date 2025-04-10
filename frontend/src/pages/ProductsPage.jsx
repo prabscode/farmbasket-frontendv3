@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import Products from "./Products";
 import SidebarFilter from "../components/SidebarFilter";
-import Categories from "../components/Categories";
 
 const Productspage = ({ userId }) => {
   const [filters, setFilters] = useState({
